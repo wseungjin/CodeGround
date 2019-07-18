@@ -34,54 +34,44 @@ for i in range(0,len(char_list)):
 
 char_list.sort()
 
-print(char_list)
+# print(char_list)
+
+
 
 def searchChe(sentence):
-    cur=0
-    flag=0
-    errorflag=0
-    save=0
+    # flag=0
     
-    while cur+1<len(sentence):
+    saveList=[]
+  
         
-        errorflag=0
-        flag=0
-        if cur==save and cur!=0:
-            errorflag=1
-        if errorflag!=1:
-            for i in range(0,len(char_list)):  
-                if sentence[cur:cur+2]==char_list[i]:
-                    print("2 "+sentence[cur:cur+2])
-                    flag=2
-                    errorflag=0
-                    save=cur
-                    cur=cur+2;
-                    errorflag=0
-                    break
-        if flag!=2:    
-            for i in range(0,len(char_list)):
-                if sentence[cur:cur+1]==char_list[i]:
-                    print("1 "+sentence[cur:cur+1])
-                    flag=1
-                    errorflag=0
-                    save=cur
-                    cur=cur+1;
-                    break
+    for k in range(0,len(sentence)-1):
+        saveList.append(0)
+        print(saveList)
+        for i in range(0,len(char_list)):
             
-            
+            if sentence[k:k+2]==char_list[i]:
+                # print("2 "+sentence[cur:cur+2])
+                if(saveList[k]==0):
+                    saveList[k]=2
+                elif(saveList[k]==1):
+                    saveList[k]=3
                 
-                
-        if(flag==0 and errorflag==0):
-            cur=save
-        elif(errorflag==1):
-            break
-                        
+            elif sentence[k:k+1]==char_list[i]:
+                # print("1 "+sentence[cur:cur+1])
+                if(saveList[k]==0):
+                    saveList[k]=1
+                elif(saveList[k]==2):
+                    saveList[k]=3
+    
+    for k in range(0,len(saveList)-1):
+        if saveList[len(saveList)-1-k]==0 and saveList[len(saveList)-1-(k+1)]<2:
+            return 1  
+    
+    return 0                    
+
+    # print(saveList)
     
     
-    if flag==0:
-        return 1
-    else:
-        return 0
 
 inf = open('input.txt');
 # inf = sys.stdin 

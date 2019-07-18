@@ -34,54 +34,67 @@ for i in range(0,len(char_list)):
 
 char_list.sort()
 
-print(char_list)
+# print(char_list)
+
+
 
 def searchChe(sentence):
-    cur=0
+    
     flag=0
-    errorflag=0
-    save=0
-    
-    while cur+1<len(sentence):
+    leng=len(sentence)-1
+    saveList=[]
+  
         
-        errorflag=0
-        flag=0
-        if cur==save and cur!=0:
-            errorflag=1
-        if errorflag!=1:
-            for i in range(0,len(char_list)):  
-                if sentence[cur:cur+2]==char_list[i]:
-                    print("2 "+sentence[cur:cur+2])
-                    flag=2
-                    errorflag=0
-                    save=cur
-                    cur=cur+2;
-                    errorflag=0
-                    break
-        if flag!=2:    
-            for i in range(0,len(char_list)):
-                if sentence[cur:cur+1]==char_list[i]:
-                    print("1 "+sentence[cur:cur+1])
-                    flag=1
-                    errorflag=0
-                    save=cur
-                    cur=cur+1;
-                    break
-            
-            
-                
-                
-        if(flag==0 and errorflag==0):
-            cur=save
-        elif(errorflag==1):
+    for k in range(0,leng):
+        if sentence[k:k+2] in char_list and sentence[k:k+1] in char_list:
+            saveList.append(3)    
+        elif sentence[k:k+2] in char_list:
+            saveList.append(2)
+        elif sentence[k:k+1] in char_list:
+            saveList.append(1)
+        else:
+            saveList.append(0)
+    
+    # print(saveList)        
+    
+    for k in range(leng-1,0,-1):
+        # print(saveList[k])
+        if saveList[k]==0 and k==0:
+            flag=1
             break
-                        
-    
-    
+        elif saveList[k]==0 and saveList[k-1]==(2 or 3):
+            saveList[k]=-1
+            saveList[k-1]=-1
+        elif saveList[k]==0:
+            flag=1
+            break
+        elif saveList[k]==-1 and k!=0 and saveList[k-1]!=2 :
+            continue
+        elif saveList[k]==-1 and k>1 and saveList[k-1]==2 and saveList[k-2]==(2 or 3): 
+            continue
+        elif saveList[k]==-1 and k>1 and saveList[k-1]==2 and saveList[k-2]==(1 or 0):
+            flag=1
+            break
+        elif saveList[k]==(1 or 3) and k!=0 and saveList[k-1]==1:
+            continue
+        elif saveList[k]==2 and saveList[k+1]==-1:
+            flag=1
+            break
+        elif saveList[k]==2 and saveList[k+1]!=-1:
+            continue      
+        elif k==0 and saveList[k]==(1 or 3):
+            continue    
+
+        
+
     if flag==0:
-        return 1
-    else:
         return 0
+    else:
+        return 1             
+
+    # print(saveList)
+    
+    
 
 inf = open('input.txt');
 # inf = sys.stdin 
