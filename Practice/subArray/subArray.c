@@ -53,14 +53,14 @@ int main(void)
 	   You may remove the comment symbols(//) in the below statement and use it.
 	   But before submission, you must remove the freopen function or rewrite comment symbols(//).
 	 */
-	// freopen("input.txt", "r", stdin);
+	freopen("input.txt", "r", stdin);
 
 	/*
 	   If you remove the statement below, your program's output may not be rocorded
 	   when your program is terminated after the time limit.
 	   For safety, please use setbuf(stdout, NULL); statement.
 	 */
-	setbuf(stdout, NULL);
+	// setbuf(stdout, NULL);
 
 	scanf("%d", &T);
     int num=0;
