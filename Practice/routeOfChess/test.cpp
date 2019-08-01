@@ -10,32 +10,20 @@ Please be very careful.
 
 #include <iostream>
 #include <vector>
+#include <cstring>
+#include <algorithm>
 
 using namespace std;
 #define MAX 100000
 #define MOD 1000000007
 
 long long Answer;
-long long facList[2*MAX+3];
+long long facL[2*MAX+3];
+long long facR[2*MAX+3];
 
 
-void fac(long long x)
+long long powRem(long long x) 
 {
-    long long i;
-
-    
-    facList[0]=1;
-    facList[1]=1;
-    if(x>1)
-    {
-        for (i = 2; i <= x; i++)
-        {
-            facList[i] = (i * facList[i-1])%MOD;
-        }
-    }
-}
-
-long long powRem(long long x) {
 	long long rem = 1; // remainder
 	long long pow = MOD - 2;
 
@@ -48,6 +36,38 @@ long long powRem(long long x) {
 
 	return rem;
 }
+
+void fac(long long x)
+{
+    long long i;
+    facL[0]=1;
+	facR[0]=1;
+    
+    for (i = 1; i <= x; i++)
+    {
+        facL[i] = (i * facL[i-1])%MOD;
+		facR[i] = powRem(facL[i])%MOD;
+    }
+    
+}
+
+long long comb(long long n, long long k) 
+{
+	if(n<k||k<0)
+	{
+		return 0;
+	}
+
+	return ((facL[n]*facR[k]%MOD)*facR[n-k])%MOD;
+}
+
+long long cal(pair<int,int> x, pair<int,int> y)
+{
+	return comb(y.first-x.first+y.second-x.second,y.second-x.second);
+}
+
+
+
 
 int main(int argc, char** argv)
 {
@@ -62,51 +82,59 @@ int main(int argc, char** argv)
 	   But before submission, you must remove the freopen function or rewrite comment symbols(//).
 	 */	
 
-	fac(2+MAX+1);
+	fac(2*MAX+1);
+
+	// for(int i=0; i<2*MAX+1;i++)
+	// {
+	// 	cout << facR[i] << endl;
+	// }
 
 	freopen("input.txt", "r", stdin);
 
 	cin >> T;
 	for(test_case = 0; test_case  < T; test_case++)
 	{
-		int N,M,oNum;
-		long long save,msave1,msave2;		
+		// ios_base::sync_with_stdio(false);
+	    // cin.tie(NULL);
+
+		int N,M,K;
+		// long long save,msave1,msave2;		
 		Answer = 0;
 		int ox,oy;
-		cin >> N >> M >> oNum;
-		// cout << N << M << oNum << endl;
-		vector <pair<int,int> > oList;
-		for(int i=0;i<oNum;i++)
+		cin >> N >> M >> K;
+		// cout << N << M << K << endl;
+		vector <pair<int,int> > oList(K+2);
+		vector <long long> path(K+2);
+		
+		for(int i=1;i<=K;i++)
 		{
 			cin >> ox >> oy;
-			if(ox>N || oy>M)//don't need to count 
-			{
-				continue;
-			}
-			oList.push_back(make_pair(ox,oy));
+			oList[i].first=ox;
+			oList[i].second=oy;
 			// cout << ox << oy << endl;
 		}
-		oNum=oList.size();
+		oList[K+1].first=N;
+		oList[K+1].second=M;
+		oList[0].first=1;
+		oList[0].second=1;
 
-		
-		save=powRem(facList[N-1]*facList[M-1])%MOD;
-		Answer=(facList[N+M-2]*save)%MOD;
-		cout << Answer << endl;
-		for(int i=0;i<oNum;i++)
+		sort(oList.begin()+1,oList.begin()+K+1);
+
+		for(int i=K;i>=0;i--)
 		{
-			save=powRem(facList[oList[i].first-1]*facList[oList[i].second-1])%MOD;
-			msave1=(facList[oList[i].first+oList[i].second-2]*save)%MOD;
-			save=powRem(facList[N-oList[i].first]*facList[M-oList[i].second])%MOD;
-			msave2=(facList[N+M-oList[i].first-oList[i].second]*save)%MOD;
-			msave1=(msave1*msave2)%MOD;
-			
-			Answer=Answer-msave1;
-			if(Answer<0)
+			path[i]=cal(oList[i],oList[K+1]);
+			for(int j=i+1;j<=K;j++)
 			{
-				Answer=Answer+MOD;
+				if(oList[i].first<=oList[j].first&&oList[i].second<=oList[j].second)
+				{
+					path[i]=path[i]-(path[j]*cal(oList[i],oList[j]));
+					path[i]=(path[i]%MOD+MOD)%MOD;
+				}
 			}
-			cout << Answer << endl;
+
 		}
+		Answer=path[0];
+		
 
 
 		cout << "Case #" << test_case+1 << endl;
