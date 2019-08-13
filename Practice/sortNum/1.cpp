@@ -10,50 +10,11 @@ Please be very careful.
 
 #include <iostream>
 #include <vector>
-#include <string.h>
+#include <algorithm>
+
 using namespace std;
 
-
-
-int Answer;
-
-int map[201][201];
-int visited[201];
-
-
-void dfs(int cur,int num, int color) 
-{
-    if(color==1)
-    {
-        visited[cur] = color;
-        color=2;
-    }
-    else
-    {
-        visited[cur] = color;
-        color=1;
-    }
-    
-    // printf("%d ", cur);
-    for (int i = 1; i <= num; i++) 
-    {
-        if(visited[i]!=color&&map[cur][i]!=0&&visited[i]!=0)
-        {
-            Answer=0;
-            return;
-        }
-        if (visited[i]!=0) 
-        {
-            continue;
-        }
-        else if(map[cur][i] == 0 )
-        {
-            continue;
-        }
-         // already visited or not connected.
-        dfs(i,num,color);
-    }
-}
+long long Answer;
 
 int main(int argc, char** argv)
 {
@@ -73,31 +34,31 @@ int main(int argc, char** argv)
 	cin >> T;
 	for(test_case = 0; test_case  < T; test_case++)
 	{
-        int N,M;
-        cin >> N >> M;
-        Answer=1;
-
-        vector <pair<int,int> > comL(M);
-
-        for(int i=0; i<=N; i++)
+        int tNum;
+        cin >> tNum;
+        vector <long long> nList;
+        long long temp;
+        for(int i=0;i<tNum;i++)
         {
-        memset(map[i],0, sizeof(int)*(N+1));
+            cin >> temp;
+            nList.push_back(temp);
         }
-        memset(visited,0,sizeof(int)*(N+1));
-        for(int i=0;i<M;i++)
-        {   
-            cin >> comL[i].first >> comL[i].second; 
-            map[comL[i].first][comL[i].second]=1;
-            map[comL[i].second][comL[i].first]=1;
+        sort(nList.begin(),nList.end());
+
+        Answer=0;
+        for(int i=0;i<tNum;i++)
+        {
+            if(i%2==0)
+            {
+                Answer=Answer+nList[i];
+            }
+            else
+            {
+                Answer=Answer-nList[i];
+            }
+            
         }
 
-        Answer = 1;
-
-        dfs(1,N,1);
-
-
-
-		
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		/*
 		   Implement your algorithm here.
