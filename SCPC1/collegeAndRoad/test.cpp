@@ -1,20 +1,132 @@
-2
-6 7
-6 3 3
-6 2 3
-1 2 2
-2 5 8
-5 3 9
-2 4 2
-3 1 1
-7 10
-6 7 7
-7 4 4
-1 2 3
-3 4 4
-6 4 10
-7 3 4
-3 1 8
-2 3 9
-3 5 3
-6 3 8
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int N, M, u, v, d;
+
+int Answer;
+
+vector<vector<pair<int, int> > > edge;
+vector<vector<int> > Dijkstra(int start)
+{
+    vector<int> dist(N + 1, -1);
+    // for(int i=1;i<=N;i++)
+    // {
+    //     cout << dist[i] << endl;
+    // }
+    vector<vector<int> > path(N+1);
+    priority_queue<pair<int, int> > pq; // first : dist , second : vertex_pos
+    dist[start] = 0;
+    pq.push(make_pair(-dist[start], start)); // Min-Heap처럼 사용하기 위해 앞의 거리 인자에 -값을 곱해줌.
+    while (!pq.empty())
+    {
+        int here = pq.top().second;
+        int heredist = -pq.top().first;
+        // cout << "here" << here << " " << heredist << endl;
+        pq.pop();
+        if (heredist > dist[here])
+            continue;
+        for (int i = 0; i < edge[here].size(); i++)
+        {
+            int there = edge[here][i].first;
+            int nextdist = heredist + edge[here][i].second;
+            // cout << "there" << there << " " << nextdist << endl;
+
+            if (dist[there] == -1)
+            { //최단 거리 갱신
+                dist[there] = nextdist;
+                // for(int j=0; j<path[here].size();j++)
+                // {
+                //     path[there].push_back(path[here][j]);
+                // }
+                path[there].push_back(here);
+                // cout <<  there << " " << here << endl;
+                pq.push(make_pair(-nextdist, there));
+            }
+            else if(dist[there] > nextdist)
+            {
+                dist[there] = nextdist;
+                // path[there].pop_back();
+                path[there].push_back(here);
+                // cout <<  there << " " << here << endl;
+                pq.push(make_pair(-nextdist, there));
+            }
+        }
+    }
+    // for(int i=1;i<=N;i++)
+    // {
+    //     if(i!=start&&path[i][0]!=start)
+    //     {
+    //         for(int j=0;j<path[path[i][0]].size();j++)
+    //         {
+    //             path[i].push_back(path[path[i][0]][j]);
+    //         }
+            
+    //     }
+        
+    // }    
+    // for(int i=1;i<=N;i++)
+    // {
+    //     if(i!=start)
+    //     {
+    //         path[i].pop_back();      
+    //     }  
+    // }   
+
+
+    return path;
+}
+
+int main(int argc, char **argv)
+{
+    int T, test_case;
+    /*
+	   The freopen function below opens input.txt file in read only mode, and afterward,
+	   the program will read from input.txt file instead of standard(keyboard) input.
+	   To test your program, you may save input data in input.txt file,
+	   and use freopen function to read from the file when using cin function.
+	   You may remove the comment symbols(//) in the below statement and use it.
+	   Use #include<cstdio> or #include <stdio.h> to use the function in your program.
+	   But before submission, you must remove the freopen function or rewrite comment symbols(//).
+	 */
+
+    freopen("input.txt", "r", stdin);
+
+    cin >> T;
+    for (test_case = 0; test_case < T; test_case++)
+    {
+
+        Answer = 0;
+        cin >> N >> M;
+        edge.resize(N + 1);
+        for (int i = 0; i < M; i++)
+        {
+            cin >> u >> v >> d;
+            edge[u].push_back(make_pair(v, d));
+            edge[v].push_back(make_pair(u, d));
+        }
+
+        for(int i = 1; i <= N; i++)
+        {
+            vector<vector<int> > pathL=Dijkstra(i);
+            cout << "path from" << i << endl; 
+            for(int j=1;j<=N;j++)
+            {
+                cout << "path " << j << " : ";
+                for(int l=0;l<pathL[j].size();l++)
+                {
+                    cout <<  pathL[j][l] << " ";
+                }
+                cout << endl;
+            }
+        }
+        
+        cout << "Case #" << test_case + 1 << endl;
+        cout << Answer << endl;
+    }
+
+    return 0; //Your program should return 0 on normal termination.
+}
