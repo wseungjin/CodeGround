@@ -8,9 +8,9 @@ using namespace std;
 int N, M, u, v, d;
 
 int Answer;
+vector <int> answer;
 
-vector<vector<pair<int, int> > > edge;
-vector<vector<int> > Dijkstra(int start)
+vector<vector<int> > Dijkstra(int start,vector<vector<pair<int, int> > > edge)
 {
     vector<int> dist(N + 1, -1);
     // for(int i=1;i<=N;i++)
@@ -34,26 +34,31 @@ vector<vector<int> > Dijkstra(int start)
             int there = edge[here][i].first;
             int nextdist = heredist + edge[here][i].second;
             // cout << "there" << there << " " << nextdist << endl;
+            // cout <<  there << " : " << here << "   distthere :" << dist[there] << "   nextdist : " << nextdist << endl;
 
             if (dist[there] == -1)
             { //최단 거리 갱신
                 dist[there] = nextdist;
-                // for(int j=0; j<path[here].size();j++)
-                // {
-                //     path[there].push_back(path[here][j]);
-                // }
                 path[there].push_back(here);
-                // cout <<  there << " " << here << endl;
+                pq.push(make_pair(-nextdist, there));
+            }
+            else if(dist[there] == nextdist)
+            {
+                dist[there] = nextdist;
+                path[there].pop_back();                
+                path[there].push_back(here);
                 pq.push(make_pair(-nextdist, there));
             }
             else if(dist[there] > nextdist)
             {
                 dist[there] = nextdist;
-                // path[there].pop_back();
+                path[there].pop_back();                
                 path[there].push_back(here);
-                // cout <<  there << " " << here << endl;
+            
+
                 pq.push(make_pair(-nextdist, there));
             }
+           
         }
     }
     // for(int i=1;i<=N;i++)
@@ -98,34 +103,70 @@ int main(int argc, char **argv)
     cin >> T;
     for (test_case = 0; test_case < T; test_case++)
     {
-
-        Answer = 0;
+        
         cin >> N >> M;
-        edge.resize(N + 1);
+        Answer=0;
+        answer.resize(N+1);
+        for(int i=1;i<=N;i++)
+        {
+           answer[i]=1;      
+        //    cout << answer[i] << " ";  
+        }
+        // cout << endl;     
+        vector<vector<pair<int, int> > > edge(N+1);
         for (int i = 0; i < M; i++)
         {
             cin >> u >> v >> d;
             edge[u].push_back(make_pair(v, d));
             edge[v].push_back(make_pair(u, d));
         }
+        // for (int i = 1; i <= N; i++)
+        // {
+        //     for(int j=0;j<edge[i].size();j++)
+        //     {
+        //         cout << i << ":" << edge[i][j].first << ":" << edge[i][j].second << "  ";  
+        //     }
+        //     cout << endl;
+        // }
+
 
         for(int i = 1; i <= N; i++)
         {
-            vector<vector<int> > pathL=Dijkstra(i);
-            cout << "path from" << i << endl; 
+            vector<vector<int> > pathL=Dijkstra(i,edge);
+            // cout << "path from" << i << endl; 
             for(int j=1;j<=N;j++)
             {
-                cout << "path " << j << " : ";
+                // cout << "path " << j << " : ";
                 for(int l=0;l<pathL[j].size();l++)
                 {
-                    cout <<  pathL[j][l] << " ";
+                    // cout <<  pathL[j][l] << " ";
+                    if(i!=pathL[j][l])
+                    {
+                        answer[pathL[j][l]]=0;
+                    }
                 }
-                cout << endl;
+                // cout << endl;
             }
         }
-        
+        for(int i=1;i<=N;i++)
+        {
+            if(answer[i]==1)
+            {
+                Answer++;
+            }
+        }
+
         cout << "Case #" << test_case + 1 << endl;
-        cout << Answer << endl;
+        cout << Answer << " ";
+        for(int i=1;i<=N;i++)
+        {
+            if(answer[i]==1)
+            {
+                cout << i << " " ;
+            }
+            
+        }
+        cout << endl;
     }
 
     return 0; //Your program should return 0 on normal termination.
