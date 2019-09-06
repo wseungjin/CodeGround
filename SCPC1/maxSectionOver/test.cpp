@@ -12,10 +12,68 @@ Please be very careful.
 #include <vector>
 #include <algorithm>
 
+#define EMPTY 50000000
+
 using namespace std;
 
-typedef pair<int,int>Point2D; 
 int Answer;
+
+class Point2D{
+private: 
+	int x;
+	int y;
+
+public:
+
+	void setX(int X)
+	{
+		x=X;
+	}
+
+	void setY(int Y)
+	{
+		y=Y;
+	}
+
+
+	int getX()
+	{
+		return x;
+	}
+
+	int getY()
+	{
+		return y;
+	}
+
+	bool Point2D::operator==(Point2D& a) 
+	{
+		bool tr=false;
+		if(x==a.x & y==a.y)
+		{
+			tr=true;
+		}
+		return tr; 
+	}
+
+	Point2D& Point2D::operator=(const Point2D& c)
+	{
+		x = c.x;
+		y = c.y;
+		return *this;
+	}
+
+	static bool include(Point2D const &small,Point2D const &big)
+	{
+		if(small.x>=big.x && small.y <= big.y)
+		{
+			return true;
+		}
+		return false;
+	}
+
+
+};
 
 class tree_node {
 private:
@@ -25,8 +83,7 @@ private:
 	tree_node *right;
 public:
 	tree_node(Point2D val,tree_node *p=NULL,tree_node *l= NULL,tree_node *r= NULL) {
-		this->value.first = val.first;
-        this->value.second = val.second;
+		this->value = val;
 		this->parent = p;
 		this->left = l;
 		this->right = r;
@@ -76,7 +133,7 @@ public:
 		this->size = 0;
 	}
 	void search(tree_node *cur, Point2D val) {
-		if (cur->getValue() == val) {
+		if (Point2D::include(val,cur->getValue())) {
 			ptr = cur;
 		}
 		if (cur->isLeftExist()) {
@@ -99,29 +156,33 @@ public:
 		return root;
 	}
 	void insert(Point2D parent_value,Point2D val) {
-		tree_node *newNode = new tree_node(val);
-		if (root == NULL) {
-			root = newNode;
-			return;
-		}
-		ptr = NULL;
-		tree_node *Parent;
-		search(root, parent_value);
-		Parent = ptr;
-		if (Parent == NULL) {
-			// Parent Node not exist
-			return;
-		}
-		else if (!Parent->isLeftExist()) {
-			Parent->setLeft(newNode);
-			newNode->setParent(Parent);
-		}
-		else if (!Parent->isRightExist()) {
-			Parent->setRight(newNode);
-			newNode->setParent(Parent);
-		}
-		else {
-			// parent node has left,right node
+
+		while(1)
+		{
+			tree_node *newNode = new tree_node(val);
+			if (root == NULL) {
+				root = newNode;
+				return;
+			}
+			ptr = NULL;
+			tree_node *Parent;
+			search(root, parent_value);
+			Parent = ptr;
+			if (Parent == NULL) {
+				// Parent Node not exist
+				return;
+			}
+			else if (!Parent->isLeftExist()) {
+				Parent->setLeft(newNode);
+				newNode->setParent(Parent);
+			}
+			else if (!Parent->isRightExist()) {
+				Parent->setRight(newNode);
+				newNode->setParent(Parent);
+			}
+			else {
+				// parent node has left,right node
+			}
 		}
 	}
 
@@ -221,8 +282,8 @@ public:
 
 int compare(const void *fir, const void *sec)
 {
-    int x1=((Point2D*)(fir))->second-((Point2D*)(fir))->first;
-    int x2=((Point2D*)(sec))->second-((Point2D*)(sec))->first;
+    int x1=((Point2D*)(fir))->getY-((Point2D*)(fir))->getX;
+    int x2=((Point2D*)(sec))->getY-((Point2D*)(sec))->getX;
 
     if (x1>x2)
         return 1;
@@ -263,19 +324,23 @@ int main(int argc, char** argv)
 
         for(int i=0;i<tNum;i++)
         {
-            cin >> nList[i].first >> nList[i].second;
+            cin >> tempx >> tempy;
+			nList[i].setX(tempx);
+			nList[i].setY(tempy);
         }
         qsort(&nList[0],nList.size(),sizeof(nList[0]),compare);
 
-        for(int i=0;i<tNum;i++)
-        {
-            cout << nList[i].first << " " << nList[i].second << endl;
-        }
+        
         tree tr;
+		for(int i=0;i<tNum;i++)
+        {
+			
+        }
+		
 
 		for(int i=0;i<tNum;i++)
         {
-            t
+            
         }
 		
 		// Print the answer to standard output(screen).

@@ -33,8 +33,8 @@ vector<vector<int> > Dijkstra(int start,vector<vector<pair<int, int> > > edge)
         {
             int there = edge[here][i].first;
             int nextdist = heredist + edge[here][i].second;
-            // cout << "there" << there << " " << nextdist << endl;
-            // cout <<  there << " : " << here << "   distthere :" << dist[there] << "   nextdist : " << nextdist << endl;
+            cout << "there" << there << " " << nextdist << endl;
+            cout <<  there << " : " << here << "   distthere :" << dist[there] << "   nextdist : " << nextdist << endl;
 
             if (dist[there] == -1)
             { //최단 거리 갱신
